@@ -392,91 +392,91 @@ icons = [] # This list gets populated at startup
 buttons = [0] * (Mode.LAST+1)   # create dummy elements for every screen
 
 buttons[Mode.PLAYBACK] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done' , cb=doneCallback           ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev' , cb=imageCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next' , cb=imageCallback, value= 1),
-  Button((  0,  0,  0,  0), layout=CENTER                                              ), # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=CENTER                                              ), # Spinner (when enabled)
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='trash', cb=imageCallback, value= 0)]
-
-buttons[Mode.DELETE] = [
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='delete'),
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='yn', fg='yes',cb=deleteCallback, value=True),
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='yn', fg='no' ,cb=deleteCallback, value=False)]
-
-buttons[Mode.NO_IMAGES] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, cb=doneCallback), # Full screen = button
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='done'),       # Fake 'Done' button
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='empty')]      # 'Empty' message
-
-buttons[Mode.VIEWFINDER] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMLEFT  , bg='gear', cb=viewCallback, value=0),
-  Button((  0,  0,  0,  0), layout=BOTTOMRIGHT , bg='play', cb=viewCallback, value=1),
-  Button((  0,  0,  0,  0), layout=CENTER      , cb=viewCallback, value=2),
-  Button((  0,  0,  0,  0), layout=CENTER),           # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=CENTER)]           # Spinner (when enabled)
-
-buttons[Mode.STORAGE] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done', cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev', cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next', cb=settingCallback, value= 1),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='store-folder', cb=storeModeCallback, value=0),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='store-boot', cb=storeModeCallback, value=1),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='store-dropbox', cb=storeModeCallback, value=2),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='storage')]
-
-buttons[Mode.SIZE] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done', cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev', cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next', cb=settingCallback, value= 1),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='size-l', cb=sizeModeCallback, value=0),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='size-m', cb=sizeModeCallback, value=1),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='size-s', cb=sizeModeCallback, value=2),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='size')]
-
-buttons[Mode.EFFECT] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done', cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev', cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next', cb=settingCallback, value= 1),
-  Button((  0,  0,  0,  0), layout=CENTERLEFT  , bg='prev', cb=fxCallback     , value=-1),
-  Button((  0,  0,  0,  0), layout=CENTERRIGHT , bg='next', cb=fxCallback     , value= 1),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='fx-none'),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='fx')]
-
-buttons[Mode.ISO] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done' cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev' cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next' cb=settingCallback, value= 1),
-  Button((+10,-10,  0,  0), layout=CENTERLEFT  , bg='prev', cb=isoCallback    , value=-1),
-  Button((-10,-10,  0,  0), layout=CENTERRIGHT , bg='next', cb=isoCallback    , value= 1),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='iso-0'),
-  Button((  0,+10,  0,  0), layout=CENTER      , bg='iso-bar'),
-  Button((  0,+20,  0,  0), layout=CENTER      , bg='iso-arrow'),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='iso')]
-
-buttons[Mode.AWB] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done' cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev' cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next' cb=settingCallback, value= 1),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='prev', cb=awbCallback    , value=-1),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='next', cb=awbCallback    , value= 1),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='awb-auto'),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='awb')]
-
-buttons[Mode.QUALITY] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done' cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev' cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next' cb=settingCallback, value= 1),
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='quality-jpg', cb=qualityModeCallback, value=0),
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quality')]
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=imageCallback      , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=imageCallback      , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # 'Working' label (when enabled)
+  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # Spinner (when enabled)
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='trash'   ,                       cb=imageCallback      , value= 0   )]
+                                                                                                            
+buttons[Mode.DELETE] = [                                                                                    
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='delete'                                                             ),
+  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='yn'      , fg='yes'            , cb=deleteCallback     , value=True ),
+  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='yn'      , fg='no'             , cb=deleteCallback     , value=False)]
+                                                                                                            
+buttons[Mode.NO_IMAGES] = [                                                                                 
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER,                                      cb=doneCallback                    ), # Full screen = button
+  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='done'                                                               ), # Fake 'Done' button
+  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='empty'                                                              )] # 'Empty' message
+                                                                                                            
+buttons[Mode.VIEWFINDER] = [                                                                                
+  Button((  0,  0,  0,  0), layout=BOTTOMLEFT  , bg='gear'    ,                       cb=viewCallback       , value=0    ),
+  Button((  0,  0,  0,  0), layout=BOTTOMRIGHT , bg='play'    ,                       cb=viewCallback       , value=1    ),
+  Button((  0,  0,  0,  0), layout=CENTER      ,                                      cb=viewCallback       , value=2    ),
+  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # 'Working' label (when enabled)
+  Button((  0,  0,  0,  0), layout=CENTER                                                                                )] # Spinner (when enabled)
+                                                                                                            
+buttons[Mode.STORAGE] = [                                                                                   
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback),     
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='store-folder'   , cb=storeModeCallback  , value=0    ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='store-boot'     , cb=storeModeCallback  , value=1    ),
+  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='store-dropbox'  , cb=storeModeCallback  , value=2    ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='storage'                                                            )]
+                                                                                                            
+buttons[Mode.SIZE] = [                                                                                      
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='size-l'         , cb=sizeModeCallback   , value=0    ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='size-m'         , cb=sizeModeCallback   , value=1    ),
+  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='size-s'         , cb=sizeModeCallback   , value=2    ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='size'                                                               )]
+                                                                                                            
+buttons[Mode.EFFECT] = [                                                                                    
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=fxCallback         , value=-1   ),
+  Button((  0,  0,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=fxCallback         , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='fx-none'                                                            ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='fx'                                                                 )]
+                                                                                                            
+buttons[Mode.ISO] = [                                                                                       
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,-10,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=isoCallback        , value=-1   ),
+  Button((-10,-10,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=isoCallback        , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='iso-0'                                                              ),
+  Button((  0,+10,  0,  0), layout=CENTER      , bg='iso-bar'                                                            ),
+  Button((  0,+20,  0,  0), layout=CENTER      , bg='iso-arrow'                                                          ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='iso'                                                                )]
+                                                                                                                         
+buttons[Mode.AWB] = [                                                                                                    
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),                    
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=awbCallback        , value=-1   ),
+  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=awbCallback        , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='awb-auto'                                                           ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='awb'                                                                )]
+                                                                                                            
+buttons[Mode.QUALITY] = [                                                                                   
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='quality-jpg'    , cb=qualityModeCallback, value=0    ),
+  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1    ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quality'                                                            )]
 
 buttons[Mode.QUIT] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'   , cb=doneCallback),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'   , cb=settingCallback, value=-1),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'   , cb=settingCallback, value= 1),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='quit-ok', cb=quitCallback),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quit')]
+  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((  0,  0,  0,  0), layout=CENTER      , bg='quit-ok' ,                       cb=quitCallback                    ),
+  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quit'                                                               )]
 
 # Assorted utility functions -----------------------------------------------
 
