@@ -53,20 +53,24 @@ import time
 from pygame.locals import *
 from subprocess import call  
 
+# Aspect ratio for alternative screen sizes --------------------------------
+DX = 480 / 320
+DY = 320 / 240
+
 # Class encapsulating constants --------------------------------------------
 
 class Mode:
   UNDEFINED  = -1
-  PLAYBACK   = 0
-  DELETE     = 1
-  NO_IMAGES  = 2
-  VIEWFINDER = 3
-  STORAGE    = 4
-  SIZE       = 5
-  EFFECT     = 6
-  ISO        = 7
-  AWB        = 8
-  QUALITY    = 9
+  PLAYBACK   =  0
+  DELETE     =  1
+  NO_IMAGES  =  2
+  VIEWFINDER =  3
+  STORAGE    =  4
+  SIZE       =  5
+  EFFECT     =  6
+  ISO        =  7
+  AWB        =  8
+  QUALITY    =  9
   QUIT       = 10
   LAST       = QUIT    # LAST must be equal to the highest mode
 
@@ -303,9 +307,9 @@ upconfig        = '/home/pi/.dropbox_uploader'
 
 sizeData = [ # Camera parameters for different size settings
  # Full res      Viewfinder
- [(2592, 1944), (320, 240)], # Large
- [(1920, 1080), (320, 180)], # Med
- [(1440, 1080), (320, 240)]] # Small
+ [(2592, 1944), (int(320 * DX), int(240 * DY))], # Large
+ [(1920, 1080), (int(320 * DX), int(180 * DY))], # Med
+ [(1440, 1080), (int(320 * DX), int(240 * DY))]] # Small
 
 isoData = [ # Values for ISO settings [ISO value, indicator X position]
  [  0,  27], [100,  64], [200,  97], [320, 137],
@@ -350,99 +354,91 @@ icons = [] # This list gets populated at startup
 buttons = [0] * (Mode.LAST+1)   # create dummy elements for every screen
 
 buttons[Mode.PLAYBACK] = [
-  Button((  0,188,320, 52), bg='done' , cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev' , cb=imageCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next' , cb=imageCallback, value= 1),
-  Button(( 88, 70,157,102)), # 'Working' label (when enabled)
-  Button((148,129, 22, 22)), # Spinner (when enabled)
-  Button((121,  0, 78, 52), bg='trash', cb=imageCallback, value= 0)]
+  Button((int(  0 * DX), int(188 * DY), int(320 * DX), int( 52 * DY)), bg='done' , cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev' , cb=imageCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next' , cb=imageCallback, value= 1),
+  Button((int( 88 * DX), int( 70 * DY), int(157 * DX), int(102 * DY))), # 'Working' label (when enabled)
+  Button((int(148 * DX), int(129 * DY), int( 22 * DX), int( 22 * DY))), # Spinner (when enabled)
+  Button((int(121 * DX), int(  0 * DY), int( 78 * DX), int( 52 * DY)), bg='trash', cb=imageCallback, value= 0)]
 
 buttons[Mode.DELETE] = [
-  Button((  0,35,320, 33), bg='delete'),
-  Button(( 32,86,120,100), bg='yn', fg='yes',cb=deleteCallback, value=True),
-  Button((168,86,120,100), bg='yn', fg='no',cb=deleteCallback, value=False)]
+  Button((int(  0 * DX), int(35 * DY), int(320 * DX), int( 33 * DY)), bg='delete'),
+  Button((int( 32 * DX), int(86 * DY), int(120 * DX), int(100 * DY)), bg='yn', fg='yes',cb=deleteCallback, value=True),
+  Button((int(168 * DX), int(86 * DY), int(120 * DX), int(100 * DY)), bg='yn', fg='no',cb=deleteCallback, value=False)]
 
 buttons[Mode.NO_IMAGES] = [
-  Button((0,  0,320,240), cb=doneCallback), # Full screen = button
-  Button((0,188,320, 52), bg='done'),       # Fake 'Done' button
-  Button((0, 53,320, 80), bg='empty')]      # 'Empty' message
+  Button((int(  0 * DX), int(  0 * DY), int(240 * DX), int(320 * DY)), cb=doneCallback), # Full screen = button
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done'),       # Fake 'Done' button
+  Button((int(  0 * DX), int( 53 * DY), int(240 * DX), int( 80 * DY)), bg='empty')]      # 'Empty' message
 
 buttons[Mode.VIEWFINDER] = [
-  Button((  0,188,156, 52), bg='gear', cb=viewCallback, value=0),
-  Button((164,188,156, 52), bg='play', cb=viewCallback, value=1),
-  Button((  0,  0,320,240)           , cb=viewCallback, value=2),
-  Button(( 88, 51,157,102)),           # 'Working' label (when enabled)
-  Button((148, 110,22, 22))]           # Spinner (when enabled)
+  Button((int(  0 * DX), int(188 * DY), int(156 * DX), int( 52 * DY)), bg='gear', cb=viewCallback, value=0),
+  Button((int(164 * DX), int(188 * DY), int(156 * DX), int( 52 * DY)), bg='play', cb=viewCallback, value=1),
+  Button((int(  0 * DX), int(  0 * DY), int(240 * DX), int(320 * DY))           , cb=viewCallback, value=2),
+  Button((int( 88 * DX), int( 51 * DY), int(157 * DX), int(102 * DY))),           # 'Working' label (when enabled)
+  Button((int(148 * DX), int(110 * DY), int( 22 * DX), int( 22 * DY)))]           # Spinner (when enabled)
 
 buttons[Mode.STORAGE] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button((  2, 60,100,120), bg='radio3-1', fg='store-folder',
-    cb=storeModeCallback, value=0),
-  Button((110, 60,100,120), bg='radio3-0', fg='store-boot',
-    cb=storeModeCallback, value=1),
-  Button((218, 60,100,120), bg='radio3-0', fg='store-dropbox',
-    cb=storeModeCallback, value=2),
-  Button((  0, 10,320, 35), bg='storage')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int(  2 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-1', fg='store-folder', cb=storeModeCallback, value=0),
+  Button((int(110 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-0', fg='store-boot', cb=storeModeCallback, value=1),
+  Button((int(218 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-0', fg='store-dropbox', cb=storeModeCallback, value=2),
+  Button((int(  0 * DX), int( 10 * DY), int(240 * DX), int( 35 * DY)), bg='storage')]
 
 buttons[Mode.SIZE] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button((  2, 60,100,120), bg='radio3-1', fg='size-l',
-    cb=sizeModeCallback, value=0),
-  Button((110, 60,100,120), bg='radio3-0', fg='size-m',
-    cb=sizeModeCallback, value=1),
-  Button((218, 60,100,120), bg='radio3-0', fg='size-s',
-    cb=sizeModeCallback, value=2),
-  Button((  0, 10,320, 29), bg='size')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int(  2 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-1', fg='size-l', cb=sizeModeCallback, value=0),
+  Button((int(110 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-0', fg='size-m', cb=sizeModeCallback, value=1),
+  Button((int(218 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-0', fg='size-s', cb=sizeModeCallback, value=2),
+  Button((int(  0 * DX), int( 10 * DY), int(240 * DX), int( 29 * DY)), bg='size')]
 
 buttons[Mode.EFFECT] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button((  0, 70, 80, 52), bg='prev', cb=fxCallback     , value=-1),
-  Button((240, 70, 80, 52), bg='next', cb=fxCallback     , value= 1),
-  Button((  0, 67,320, 91), bg='fx-none'),
-  Button((  0, 11,320, 29), bg='fx')]
+  Button((int(int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int(int(  0 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=fxCallback     , value=-1),
+  Button((int(int(320 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=fxCallback     , value= 1),
+  Button((int(int(  0 * DX), int( 67 * DY), int(240 * DX), int( 91 * DY)), bg='fx-none'),
+  Button((int(int(  0 * DX), int( 11 * DY), int(240 * DX), int( 29 * DY)), bg='fx')]
 
 buttons[Mode.ISO] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button((  0, 70, 80, 52), bg='prev', cb=isoCallback    , value=-1),
-  Button((240, 70, 80, 52), bg='next', cb=isoCallback    , value= 1),
-  Button((  0, 79,320, 33), bg='iso-0'),
-  Button((  9,134,302, 26), bg='iso-bar'),
-  Button(( 17,157, 21, 19), bg='iso-arrow'),
-  Button((  0, 10,320, 29), bg='iso')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int(  0 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=isoCallback    , value=-1),
+  Button((int(320 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=isoCallback    , value= 1),
+  Button((int(  0 * DX), int( 79 * DY), int(240 * DX), int( 33 * DY)), bg='iso-0'),
+  Button((int(  9 * DX), int(134 * DY), int(302 * DX), int( 26 * DY)), bg='iso-bar'),
+  Button((int( 17 * DX), int(157 * DY), int( 21 * DX), int( 19 * DY)), bg='iso-arrow'),
+  Button((int(  0 * DX), int( 10 * DY), int(240 * DX), int( 29 * DY)), bg='iso')]
 
 buttons[Mode.AWB] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button((  0, 70, 80, 52), bg='prev', cb=awbCallback     , value=-1),
-  Button((240, 70, 80, 52), bg='next', cb=awbCallback     , value= 1),
-  Button((  0, 67,320, 91), bg='awb-auto'),
-  Button((  0, 11,320, 29), bg='awb')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int(  0 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=awbCallback    , value=-1),
+  Button((int(320 * DX), int( 70 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=awbCallback    , value= 1),
+  Button((int(  0 * DX), int( 67 * DY), int(240 * DX), int( 91 * DY)), bg='awb-auto'),
+  Button((int(  0 * DX), int( 11 * DY), int(240 * DX), int( 29 * DY)), bg='awb')]
 
 buttons[Mode.QUALITY] = [
-  Button((  0,188,320, 52), bg='done', cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev', cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next', cb=settingCallback, value= 1),
-  Button(( 32, 60,100,120), bg='radio3-1', fg='quality-jpg',
-    cb=qualityModeCallback, value=0),
-  Button((188, 60,100,120), bg='radio3-0', fg='quality-jpg+raw',
-    cb=qualityModeCallback, value=1),
-  Button((  0, 10,320, 35), bg='quality')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done', cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev', cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next', cb=settingCallback, value= 1),
+  Button((int( 32 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-1', fg='quality-jpg', cb=qualityModeCallback, value=0),
+  Button((int(188 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='radio3-0', fg='quality-jpg+raw, cb=qualityModeCallback, value=1),
+  Button((int(  0 * DX), int( 10 * DY), int(240 * DX), int( 35 * DY)), bg='quality')]
 
 buttons[Mode.QUIT] = [
-  Button((  0,188,320, 52), bg='done'   , cb=doneCallback),
-  Button((  0,  0, 80, 52), bg='prev'   , cb=settingCallback, value=-1),
-  Button((240,  0, 80, 52), bg='next'   , cb=settingCallback, value= 1),
-  Button((110, 60,100,120), bg='quit-ok', cb=quitCallback),
-  Button((  0, 10,320, 35), bg='quit')]
+  Button((int(  0 * DX), int(188 * DY), int(240 * DX), int( 52 * DY)), bg='done'   , cb=doneCallback),
+  Button((int(  0 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='prev'   , cb=settingCallback, value=-1),
+  Button((int(320 * DX), int(  0 * DY), int( 80 * DX), int( 52 * DY)), bg='next'   , cb=settingCallback, value= 1),
+  Button((int(110 * DX), int( 60 * DY), int(100 * DX), int(120 * DY)), bg='quit-ok', cb=quitCallback),
+  Button((int(  0 * DX), int( 10 * DY), int(240 * DX), int( 35 * DY)), bg='quit')]
 
 # Assorted utility functions -----------------------------------------------
 
@@ -558,7 +554,7 @@ def takePicture():
   camera.resolution = sizeData[sizeMode][0]
   try:
     camera.capture(filename, use_video_port=False, format='jpeg',
-      thumbnail=(340,240,60),bayer=qualityMode==1)
+      thumbnail=(int(320 * DX), int(240 * DY), 60),bayer=qualityMode==1)
     imgNums.append(saveNum)
     # Set image file ownership to pi user, mode to 644
     os.chown(filename, uid, gid)
@@ -581,11 +577,11 @@ def takePicture():
   t.join()
 
   if imgSurface:
-    if imgSurface.get_height() < 240: # Letterbox
+    if imgSurface.get_height() < int(240 * DY): # Letterbox
       screen.fill(0)
     screen.blit(imgSurface,
-      ((320 - imgSurface.get_width() ) / 2,
-       (240 - imgSurface.get_height()) / 2))
+      ((int(320 * DX) - imgSurface.get_width() ) / 2,
+       (int(240 * DY) - imgSurface.get_height()) / 2))
     pygame.display.update()
     time.sleep(2.5)
     loadIdx = len(imgNums)-1
@@ -626,7 +622,8 @@ def showImage(n):
 
 # fix iconPath: it's relative to the executable
 thisDir,thisFile = os.path.split(sys.argv[0])
-iconPath = thisDir + os.path.sep + iconPath
+if len(thisDir) > 0 :
+  iconPath = thisDir + os.path.sep + iconPath
 
 # Init framebuffer/touchscreen environment variables
 os.putenv('SDL_VIDEODRIVER', 'fbcon')
@@ -640,7 +637,7 @@ uid = pwd.getpwnam("pi").pw_uid
 gid = pwd.getpwnam("pi").pw_gid
 
 # Buffers for viewfinder data
-rgb = bytearray(320 * 240 * 3)
+rgb = bytearray(int(320 * DX) * int(240 * DY) * 3)
 
 # Init pygame and screen
 pygame.init()
@@ -718,12 +715,12 @@ while(True):
   else:                # 'No Photos' mode
     img = None         # You get nothing, good day sir
 
-  if img is None or img.get_height() < 240: # Letterbox, clear background
+  if img is None or img.get_height() < int(240 * DY): # Letterbox, clear background
     screen.fill(0)
   if img:
     screen.blit(img,
-      ((320 - img.get_width() ) / 2,
-       (240 - img.get_height()) / 2))
+      ((int(320 * DX) - img.get_width() ) / 2,
+       (int(240 * DY) - img.get_height()) / 2))
 
   # Overlay buttons on display and update
   for i,b in enumerate(buttons[screenMode]):
@@ -731,3 +728,4 @@ while(True):
   pygame.display.update()
 
   screenModePrior = screenMode
+  
