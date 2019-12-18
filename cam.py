@@ -76,7 +76,7 @@ class Mode:
   QUIT         = 10
   LAST         = QUIT    # LAST must be equal to the highest mode
   
-class LayoutMode:
+class LM:                # LayoutMode
   FLOATING     = 0
   TOPLEFT      = 1
   TOPCENTER    = 2
@@ -180,26 +180,26 @@ class Button:
       ih = self.iconBg.bitmap.get_height()
       dx = self.rect[0]
       dy = self.rect[1]
-      if   (self.layout == FLOATING) : return
-      elif (self.layout == TOPLEFT     ) :
+      if   (self.layout == LM.FLOATING) : return
+      elif (self.layout == LM.TOPLEFT     ) :
         self.rect = (                dx,                 dy,            iw + dx,            ih + dy)
-      elif (self.layout == TOPCENTER   ) :
+      elif (self.layout == LM.TOPCENTER   ) :
         self.rect = ((DW - iw) / 2 + dx,                 dy,  (DW + iw)/ 2 + dx,            ih + dy)
-      elif (self.layout == TOPRIGHT    ) :
+      elif (self.layout == LM.TOPRIGHT    ) :
         self.rect = (      DW - iw + dx,                 dy,            DW + dx,            ih + dy)
-      elif (self.layout == CENTERLEFT  ) :
+      elif (self.layout == LM.CENTERLEFT  ) :
         self.rect = (                dx, (DH - ih) / 2 + dy,            iw + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == CENTER      ) :
+      elif (self.layout == LM.CENTER      ) :
         self.rect = ((DW - iw) / 2 + dx, (DH - ih) / 2 + dy, (DW + iw) / 2 + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == CENTERRIGHT ) :
+      elif (self.layout == LM.CENTERRIGHT ) :
         self.rect = (      DW - iw + dx, (DH - ih) / 2 + dy,            DW + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == BOTTOMLEFT  ) :
+      elif (self.layout == LM.BOTTOMLEFT  ) :
         self.rect = (                dx,       DH - ih + dy,            iw + dx,            DH + dy)
-      elif (self.layout == BOTTOMCENTER) :
+      elif (self.layout == LM.BOTTOMCENTER) :
         self.rect = ((DW - iw) / 2 + dx,       DH - ih + dy, (DW + iw) / 2 + dx,            DH + dy)
-      elif (self.layout == BOTTOMRIGHT ) :
+      elif (self.layout == LM.BOTTOMRIGHT ) :
         self.rect = (      DW - iw + dx,       DH - ih + dy,            DW + dx,            DH + dy)
-      self.layout = FLOATING
+      self.layout = LM.FLOATING
       
 # UI callbacks -------------------------------------------------------------
 # These are defined before globals because they're referenced by items in
@@ -392,91 +392,91 @@ icons = [] # This list gets populated at startup
 buttons = [0] * (Mode.LAST+1)   # create dummy elements for every screen
 
 buttons[Mode.PLAYBACK] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=imageCallback      , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=imageCallback      , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # Spinner (when enabled)
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='trash'   ,                       cb=imageCallback      , value= 0   )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=imageCallback      , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=imageCallback      , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # 'Working' label (when enabled)
+  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # Spinner (when enabled)
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='trash'   ,                       cb=imageCallback      , value= 0   )]
                                                                                                             
 buttons[Mode.DELETE] = [                                                                                    
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='delete'                                                             ),
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='yn'      , fg='yes'            , cb=deleteCallback     , value=True ),
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='yn'      , fg='no'             , cb=deleteCallback     , value=False)]
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='delete'                                                             ),
+  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='yn'      , fg='yes'            , cb=deleteCallback     , value=True ),
+  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='yn'      , fg='no'             , cb=deleteCallback     , value=False)]
                                                                                                             
 buttons[Mode.NO_IMAGES] = [                                                                                 
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER,                                      cb=doneCallback                    ), # Full screen = button
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='done'                                                               ), # Fake 'Done' button
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='empty'                                                              )] # 'Empty' message
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER,                                      cb=doneCallback                    ), # Full screen = button
+  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='done'                                                               ), # Fake 'Done' button
+  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='empty'                                                              )] # 'Empty' message
                                                                                                             
 buttons[Mode.VIEWFINDER] = [                                                                                
-  Button((  0,  0,  0,  0), layout=BOTTOMLEFT  , bg='gear'    ,                       cb=viewCallback       , value=0    ),
-  Button((  0,  0,  0,  0), layout=BOTTOMRIGHT , bg='play'    ,                       cb=viewCallback       , value=1    ),
-  Button((  0,  0,  0,  0), layout=CENTER      ,                                      cb=viewCallback       , value=2    ),
-  Button((  0,  0,  0,  0), layout=CENTER                                                                                ), # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=CENTER                                                                                )] # Spinner (when enabled)
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMLEFT  , bg='gear'    ,                       cb=viewCallback       , value=0    ),
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMRIGHT , bg='play'    ,                       cb=viewCallback       , value=1    ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      ,                                      cb=viewCallback       , value=2    ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # 'Working' label (when enabled)
+  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                )] # Spinner (when enabled)
                                                                                                             
 buttons[Mode.STORAGE] = [                                                                                   
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback),     
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='store-folder'   , cb=storeModeCallback  , value=0    ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='store-boot'     , cb=storeModeCallback  , value=1    ),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='store-dropbox'  , cb=storeModeCallback  , value=2    ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='storage'                                                            )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback),     
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='store-folder'   , cb=storeModeCallback  , value=0    ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='radio3-0', fg='store-boot'     , cb=storeModeCallback  , value=1    ),
+  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='store-dropbox'  , cb=storeModeCallback  , value=2    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='storage'                                                            )]
                                                                                                             
 buttons[Mode.SIZE] = [                                                                                      
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='size-l'         , cb=sizeModeCallback   , value=0    ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='radio3-0', fg='size-m'         , cb=sizeModeCallback   , value=1    ),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='size-s'         , cb=sizeModeCallback   , value=2    ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='size'                                                               )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='size-l'         , cb=sizeModeCallback   , value=0    ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='radio3-0', fg='size-m'         , cb=sizeModeCallback   , value=1    ),
+  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='size-s'         , cb=sizeModeCallback   , value=2    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='size'                                                               )]
                                                                                                             
 buttons[Mode.EFFECT] = [                                                                                    
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=fxCallback         , value=-1   ),
-  Button((  0,  0,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=fxCallback         , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='fx-none'                                                            ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='fx'                                                                 )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=fxCallback         , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=fxCallback         , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='fx-none'                                                            ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='fx'                                                                 )]
                                                                                                             
 buttons[Mode.ISO] = [                                                                                       
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,-10,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=isoCallback        , value=-1   ),
-  Button((-10,-10,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=isoCallback        , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='iso-0'                                                              ),
-  Button((  0,+10,  0,  0), layout=CENTER      , bg='iso-bar'                                                            ),
-  Button((  0,+20,  0,  0), layout=CENTER      , bg='iso-arrow'                                                          ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='iso'                                                                )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,-10,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=isoCallback        , value=-1   ),
+  Button((-10,-10,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=isoCallback        , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='iso-0'                                                              ),
+  Button((  0,+10,  0,  0), layout=LM.CENTER      , bg='iso-bar'                                                            ),
+  Button((  0,+20,  0,  0), layout=LM.CENTER      , bg='iso-arrow'                                                          ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='iso'                                                                )]
                                                                                                                          
 buttons[Mode.AWB] = [                                                                                                    
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),                    
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=CENTERLEFT  , bg='prev'    ,                       cb=awbCallback        , value=-1   ),
-  Button((-10,  0,  0,  0), layout=CENTERRIGHT , bg='next'    ,                       cb=awbCallback        , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='awb-auto'                                                           ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='awb'                                                                )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),                    
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=awbCallback        , value=-1   ),
+  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=awbCallback        , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='awb-auto'                                                           ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='awb'                                                                )]
                                                                                                             
 buttons[Mode.QUALITY] = [                                                                                   
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+20,  0,  0,  0), layout=CENTERLEFT  , bg='radio3-1', fg='quality-jpg'    , cb=qualityModeCallback, value=0    ),
-  Button((-20,  0,  0,  0), layout=CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1    ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quality'                                                            )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='quality-jpg'    , cb=qualityModeCallback, value=0    ),
+  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='quality'                                                            )]
 
 buttons[Mode.QUIT] = [
-  Button((  0,  0,  0,  0), layout=BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((  0,  0,  0,  0), layout=CENTER      , bg='quit-ok' ,                       cb=quitCallback                    ),
-  Button((  0,  0,  0,  0), layout=TOPCENTER   , bg='quit'                                                               )]
+  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
+  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
+  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='quit-ok' ,                       cb=quitCallback                    ),
+  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='quit'                                                               )]
 
 # Assorted utility functions -----------------------------------------------
 
