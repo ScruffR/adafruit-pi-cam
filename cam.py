@@ -54,10 +54,8 @@ from pygame.locals import *
 from subprocess import call  
 
 # Aspect ratio for alternative screen sizes --------------------------------
-DW = 480.0
-DH = 320.0
-DX = DW / 320.0
-DY = DX / 240.0
+DW = 480
+DH = 320
 
 # Class encapsulating constants --------------------------------------------
 
@@ -70,7 +68,7 @@ class Mode:
   STORAGE      =  4
   SIZE         =  5
   EFFECT       =  6
-  ISO          =   7
+  ISO          =  7
   AWB          =  8
   QUALITY      =  9
   QUIT         = 10
@@ -127,15 +125,15 @@ class Icon:
 class Button:
 
   def __init__(self, rect, **kwargs):
-    self.rect     = rect     # Bounds
-    self.layout   = FLOATING #
-    self.color    = None     # Background fill color, if any
-    self.iconBg   = None     # Background Icon (atop color fill)
-    self.iconFg   = None     # Foreground Icon (atop background)
-    self.bg       = None     # Background Icon name
-    self.fg       = None     # Foreground Icon name
-    self.callback = None     # Callback function
-    self.value    = None     # Value passed to callback
+    self.rect     = rect        # Bounds
+    self.layout   = LM.FLOATING #
+    self.color    = None        # Background fill color, if any
+    self.iconBg   = None        # Background Icon (atop color fill)
+    self.iconFg   = None        # Foreground Icon (atop background)
+    self.bg       = None        # Background Icon name
+    self.fg       = None        # Foreground Icon name
+    self.callback = None        # Callback function
+    self.value    = None        # Value passed to callback
     for key, value in kwargs.iteritems():
       if   key == 'color' : self.color    = value
       elif key == 'bg'    : self.bg       = value
@@ -168,16 +166,21 @@ class Button:
 	(self.rect[0]+(self.rect[2]-self.iconFg.bitmap.get_width())/2,
 	 self.rect[1]+(self.rect[3]-self.iconFg.bitmap.get_height())/2))
 
-  def setBg(self, name):
+  def setIcon(self, target, name):
+    if   target == 'bg' : target = self.iconBg
+    elif target == 'fg' : target = self.iconFg
+    else return
     if name is None:
-      self.iconBg = None
+      #self.iconBg = None
+      target = None
     else:
       for i in icons:
         if name == i.name:
-	        self.iconBg = i
+	        #self.iconBg = i
+          target = i
 	        break
-      iw = self.iconBg.bitmap.get_width()
-      ih = self.iconBg.bitmap.get_height()
+      iw = target.bitmap.get_width()
+      ih = target.bitmap.get_height()
       dx = self.rect[0]
       dy = self.rect[1]
       if   (self.layout == LM.FLOATING) : return
@@ -199,7 +202,6 @@ class Button:
         self.rect = ((DW - iw) / 2 + dx,       DH - ih + dy, (DW + iw) / 2 + dx,            DH + dy)
       elif (self.layout == LM.BOTTOMRIGHT ) :
         self.rect = (      DW - iw + dx,       DH - ih + dy,            DW + dx,            DH + dy)
-      self.layout = LM.FLOATING
       
 # UI callbacks -------------------------------------------------------------
 # These are defined before globals because they're referenced by items in
@@ -279,9 +281,9 @@ def deleteCallback(n): # Delete confirmation
 
 def storeModeCallback(n): # Radio buttons on storage settings screen
   global pathData, storeMode
-  buttons[Mode.STORAGE][storeMode + 3].setBg('radio3-0')
+  buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-0')
   storeMode = n
-  buttons[Mode.STORAGE][storeMode + 3].setBg('radio3-1')
+  buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-1')
 
   #create directory if it does not exist
   if not os.path.isdir(pathData[storeMode]):
@@ -303,16 +305,16 @@ def storeModeCallback(n): # Radio buttons on storage settings screen
 
 def sizeModeCallback(n): # Radio buttons on size settings screen
   global sizeMode
-  buttons[Mode.SIZE][sizeMode + 3].setBg('radio3-0')
+  buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-0')
   sizeMode = n
-  buttons[Mode.SIZE][sizeMode + 3].setBg('radio3-1')
+  buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-1')
   camera.resolution = sizeData[sizeMode][1]
 
 def qualityModeCallback(n): # Radio buttons on quality settings screen
   global qualityMode
-  buttons[Mode.QUALITY][3+qualityMode].setBg('radio3-0')
+  buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-0')
   qualityMode = n
-  buttons[Mode.QUALITY][3+qualityMode].setBg('radio3-1')
+  buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-1')
 
 
 # Global stuff -------------------------------------------------------------
@@ -345,9 +347,9 @@ upconfig        = '/home/pi/.dropbox_uploader'
 
 sizeData = [ # Camera parameters for different size settings
  # Full res      Viewfinder
- [(2592, 1944), (int(320 * DX), int(240 * DY))], # Large
- [(1920, 1080), (int(320 * DX), int(180 * DY))], # Med
- [(1440, 1080), (int(320 * DX), int(240 * DY))]] # Small
+ [(2592, 1944), (DW, DH)],             # Large
+ [(1920, 1080), (DW, int(DH * 0.75))], # Med
+ [(1440, 1080), (DW, DH )]]            # Small
 
 isoData = [ # Values for ISO settings [ISO value, indicator X position]
  [  0,  27], [100,  64], [200,  97], [320, 137],
@@ -484,20 +486,20 @@ def setFxMode(n):
   global fxMode
   fxMode = n
   camera.image_effect = fxData[fxMode]
-  buttons[Mode.EFFECT][5].setBg('fx-' + fxData[fxMode])
+  buttons[Mode.EFFECT][5].setIcon('bg', 'fx-' + fxData[fxMode])
 
 def setIsoMode(n):
   global isoMode
   isoMode    = n
   camera.ISO = isoData[isoMode][0]
-  buttons[Mode.ISO][5].setBg('iso-' + str(isoData[isoMode][0]))
+  buttons[Mode.ISO][5].setIcon('bg', 'iso-' + str(isoData[isoMode][0]))
   buttons[Mode.ISO][7].rect = ((isoData[isoMode][1] - 10,) +
     buttons[Mode.ISO][7].rect[1:])
 
 def setAwbMode(n):
   global awbMode
   awbMode = n
-  buttons[Mode.AWB][5].setBg('awb-' + awbData[awbMode])
+  buttons[Mode.AWB][5].setIcon('bg', 'awb-' + awbData[awbMode])
   camera.awb_mode = awbData[awbMode]
   if awbData[awbMode] == 'off':
     camera.awb_gains = (1.0,1.0)    # needed because of ignorant engineers
@@ -552,21 +554,21 @@ def readImgNumsList(n):
 def spinner():
   global busy, screenMode, screenModePrior
 
-  buttons[screenMode][3].setBg('working')
+  buttons[screenMode][3].setIcon('bg', 'working')
   buttons[screenMode][3].draw(screen)
   pygame.display.update()
 
   busy = True
   n    = 0
   while busy is True:
-    buttons[screenMode][4].setBg('work-' + str(n))
+    buttons[screenMode][4].setIcon('bg', 'work-' + str(n))
     buttons[screenMode][4].draw(screen)
     pygame.display.update()
     n = (n + 1) % 5
     time.sleep(0.15)
 
-  buttons[screenMode][3].setBg(None)
-  buttons[screenMode][4].setBg(None)
+  buttons[screenMode][3].setIcon('bg', None)
+  buttons[screenMode][4].setIcon('bg', None)
   screenModePrior = Mode.UNDEFINED # Force refresh
 
 def saveThumbnail(fname,tname):      # fname: filename with extension
@@ -592,7 +594,7 @@ def takePicture():
   camera.resolution = sizeData[sizeMode][0]
   try:
     camera.capture(filename, use_video_port=False, format='jpeg',
-      thumbnail=(int(320 * DX), int(240 * DY), 60),bayer=qualityMode==1)
+      thumbnail=(DW, DH, 60),bayer=qualityMode==1)
     imgNums.append(saveNum)
     # Set image file ownership to pi user, mode to 644
     os.chown(filename, uid, gid)
@@ -615,11 +617,11 @@ def takePicture():
   t.join()
 
   if imgSurface:
-    if imgSurface.get_height() < int(240 * DY): # Letterbox
+    if imgSurface.get_height() < DH: # Letterbox
       screen.fill(0)
     screen.blit(imgSurface,
-      ((int(320 * DX) - imgSurface.get_width() ) / 2,
-       (int(240 * DY) - imgSurface.get_height()) / 2))
+      ((DW - imgSurface.get_width() ) / 2,
+       (DH - imgSurface.get_height()) / 2))
     pygame.display.update()
     time.sleep(2.5)
     loadIdx = len(imgNums)-1
@@ -675,7 +677,7 @@ uid = pwd.getpwnam("pi").pw_uid
 gid = pwd.getpwnam("pi").pw_gid
 
 # Buffers for viewfinder data
-rgb = bytearray(int(320 * DX) * int(240 * DY) * 3)
+rgb = bytearray(DW * DH * 3)
 
 # Init pygame and screen
 pygame.init()
@@ -695,13 +697,17 @@ for file in os.listdir(iconPath):
 # Assign Icons to Buttons, now that they're loaded
 for s in buttons:        # For each screenful of buttons...
   for b in s:            #  For each button on screen...
-    for i in icons:      #   For each icon...
-      if b.bg == i.name: #    Compare names; match?
-        b.iconBg = i     #     Assign Icon to Button
-        b.bg     = None  #     Name no longer used; allow garbage collection
-      if b.fg == i.name:
-        b.iconFg = i
-        b.fg     = None
+    b.setIcon('bg', b.bg)
+    b.bg = None
+    b.setIcon('fg', b.fg)
+    b.fg = None
+#    for i in icons:      #   For each icon...
+#      if b.bg == i.name: #    Compare names; match?
+#        b.iconBg = i     #     Assign Icon to Button
+#        b.bg     = None  #     Name no longer used; allow garbage collection
+#      if b.fg == i.name:
+#        b.iconFg = i
+#        b.fg     = None
 
 # one-time initialization of cache-directory
 if not os.path.isdir(cacheDir):
@@ -753,12 +759,12 @@ while(True):
   else:                # 'No Photos' mode
     img = None         # You get nothing, good day sir
 
-  if img is None or img.get_height() < int(240 * DY): # Letterbox, clear background
+  if img is None or img.get_height() < DH: # Letterbox, clear background
     screen.fill(0)
   if img:
     screen.blit(img,
-      ((int(320 * DX) - img.get_width() ) / 2,
-       (int(240 * DY) - img.get_height()) / 2))
+      (DW - img.get_width() ) / 2,
+      (DH - img.get_height()) / 2)
 
   # Overlay buttons on display and update
   for i,b in enumerate(buttons[screenMode]):
