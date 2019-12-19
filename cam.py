@@ -12,7 +12,7 @@
 # please support Adafruit and open-source development by purchasing 
 # products from Adafruit, thanks!
 #
-# http://www.adafruit.com/products/998  (Raspberry Pi Model B)
+# http://www.adafruit.com/products/998    (Raspberry Pi Model B)
 # http://www.adafruit.com/products/1367 (Raspberry Pi Camera Board)
 # http://www.adafruit.com/products/1601 (PiTFT Mini Kit)
 # This can also work with the Model A board and/or the Pi NoIR camera.
@@ -51,7 +51,7 @@ import stat
 import threading
 import time
 from pygame.locals import *
-from subprocess import call  
+from subprocess import call    
 
 # Aspect ratio for alternative screen sizes --------------------------------
 DW = 480
@@ -60,62 +60,62 @@ DH = 320
 # Class encapsulating constants --------------------------------------------
 
 class Mode:
-  UNDEFINED    = -1
-  PLAYBACK     =  0
-  DELETE       =  1
-  NO_IMAGES    =  2
-  VIEWFINDER   =  3
-  STORAGE      =  4
-  SIZE         =  5
-  EFFECT       =  6
-  ISO          =  7
-  AWB          =  8
-  QUALITY      =  9
-  QUIT         = 10
-  LAST         = QUIT    # LAST must be equal to the highest mode
-  
-class LM:                # LayoutMode
-  FLOATING     = 0
-  TOPLEFT      = 1
-  TOPCENTER    = 2
-  TOPRIGHT     = 3
-  CENTERLEFT   = 4
-  CENTER       = 5
-  CENTERRIGHT  = 6
-  BOTTOMLEFT   = 7
-  BOTTOMCENTER = 8
-  BOTTOMRIGHT  = 9
-  
+    UNDEFINED        = -1
+    PLAYBACK         =    0
+    DELETE             =    1
+    NO_IMAGES        =    2
+    VIEWFINDER     =    3
+    STORAGE            =    4
+    SIZE                 =    5
+    EFFECT             =    6
+    ISO                    =    7
+    AWB                    =    8
+    QUALITY            =    9
+    QUIT                 = 10
+    LAST                 = QUIT        # LAST must be equal to the highest mode
+    
+class LM:                                # LayoutMode
+    FLOATING         = 0
+    TOPLEFT            = 1
+    TOPCENTER        = 2
+    TOPRIGHT         = 3
+    CENTERLEFT     = 4
+    CENTER             = 5
+    CENTERRIGHT    = 6
+    BOTTOMLEFT     = 7
+    BOTTOMCENTER = 8
+    BOTTOMRIGHT    = 9
+    
 # UI classes ---------------------------------------------------------------
 
 # Small resistive touchscreen is best suited to simple tap interactions.
-# Importing a big widget library seemed a bit overkill.  Instead, a couple
+# Importing a big widget library seemed a bit overkill.    Instead, a couple
 # of rudimentary classes are sufficient for the UI elements:
 
 # Icon is a very simple bitmap class, just associates a name and a pygame
 # image (PNG loaded from icons directory) for each.
-# There isn't a globally-declared fixed list of Icons.  Instead, the list
+# There isn't a globally-declared fixed list of Icons.    Instead, the list
 # is populated at runtime from the contents of the 'icons' directory.
 
 class Icon:
 
-  def __init__(self, name):
-    self.name = name
-    try:
-      self.bitmap = pygame.image.load(iconPath + '/' + name + '.png')
-    except:
-      pass
+    def __init__(self, name):
+        self.name = name
+        try:
+            self.bitmap = pygame.image.load(iconPath + '/' + name + '.png')
+        except:
+            pass
 
-# Button is a simple tappable screen region.  Each has:
-#  - bounding rect ((X,Y,W,H) in pixels)
-#  - optional background color and/or Icon (or None), always centered
-#  - optional foreground Icon, always centered
-#  - optional single callback function
-#  - optional single value passed to callback
+# Button is a simple tappable screen region.    Each has:
+#    - bounding rect ((X,Y,W,H) in pixels)
+#    - optional background color and/or Icon (or None), always centered
+#    - optional foreground Icon, always centered
+#    - optional single callback function
+#    - optional single value passed to callback
 # Occasionally Buttons are used as a convenience for positioning Icons
-# but the taps are ignored.  Stacking order is important; when Buttons
+# but the taps are ignored.    Stacking order is important; when Buttons
 # overlap, lowest/first Button in list takes precedence when processing
-# input, and highest/last Button is drawn atop prior Button(s).  This is
+# input, and highest/last Button is drawn atop prior Button(s).    This is
 # used, for example, to center an Icon by creating a passive Button the
 # width of the full screen, but with other buttons left or right that
 # may take input precedence (e.g. the Effect labels & buttons).
@@ -124,242 +124,242 @@ class Icon:
 
 class Button:
 
-  def __init__(self, rect, **kwargs):
-    self.rect     = rect        # Bounds
-    self.layout   = LM.FLOATING #
-    self.color    = None        # Background fill color, if any
-    self.iconBg   = None        # Background Icon (atop color fill)
-    self.iconFg   = None        # Foreground Icon (atop background)
-    self.bg       = None        # Background Icon name
-    self.fg       = None        # Foreground Icon name
-    self.callback = None        # Callback function
-    self.value    = None        # Value passed to callback
-    for key, value in kwargs.iteritems():
-      if   key == 'color' : self.color    = value
-      elif key == 'bg'    : self.bg       = value
-      elif key == 'fg'    : self.fg       = value
-      elif key == 'cb'    : self.callback = value
-      elif key == 'value' : self.value    = value
-      elif key == 'layout': self.layout   = value
-    
-  def selected(self, pos):
-    x1 = self.rect[0]
-    y1 = self.rect[1]
-    x2 = x1 + self.rect[2] - 1
-    y2 = y1 + self.rect[3] - 1
-    if ((pos[0] >= x1) and (pos[0] <= x2) and	(pos[1] >= y1) and (pos[1] <= y2)):
-      if self.callback:
-	      if self.value is None: self.callback()
-	      else:                  self.callback(self.value)
-      return True
-    return False
+    def __init__(self, rect, **kwargs):
+        self.rect         = rect                # Bounds
+        self.layout     = LM.FLOATING #
+        self.color        = None                # Background fill color, if any
+        self.iconBg     = None                # Background Icon (atop color fill)
+        self.iconFg     = None                # Foreground Icon (atop background)
+        self.bg             = None                # Background Icon name
+        self.fg             = None                # Foreground Icon name
+        self.callback = None                # Callback function
+        self.value        = None                # Value passed to callback
+        for key, value in kwargs.iteritems():
+            if     key == 'color' : self.color        = value
+            elif key == 'bg'        : self.bg             = value
+            elif key == 'fg'        : self.fg             = value
+            elif key == 'cb'        : self.callback = value
+            elif key == 'value' : self.value        = value
+            elif key == 'layout': self.layout     = value
+        
+    def selected(self, pos):
+        x1 = self.rect[0]
+        y1 = self.rect[1]
+        x2 = x1 + self.rect[2] - 1
+        y2 = y1 + self.rect[3] - 1
+        if ((pos[0] >= x1) and (pos[0] <= x2) and	(pos[1] >= y1) and (pos[1] <= y2)):
+            if self.callback:
+	            if self.value is None: self.callback()
+	            else:                                    self.callback(self.value)
+            return True
+        return False
 
-  def draw(self, screen):
-    if self.color:
-      screen.fill(self.color, self.rect)
-    if self.iconBg:
-      screen.blit(self.iconBg.bitmap,
+    def draw(self, screen):
+        if self.color:
+            screen.fill(self.color, self.rect)
+        if self.iconBg:
+            screen.blit(self.iconBg.bitmap,
 	(self.rect[0]+(self.rect[2]-self.iconBg.bitmap.get_width())/2,
 	 self.rect[1]+(self.rect[3]-self.iconBg.bitmap.get_height())/2))
-    if self.iconFg:
-      screen.blit(self.iconFg.bitmap,
+        if self.iconFg:
+            screen.blit(self.iconFg.bitmap,
 	(self.rect[0]+(self.rect[2]-self.iconFg.bitmap.get_width())/2,
 	 self.rect[1]+(self.rect[3]-self.iconFg.bitmap.get_height())/2))
 
-  def setIcon(self, target, name):
-    if   target == 'bg' : target = self.iconBg
-    elif target == 'fg' : target = self.iconFg
-    else return
-    if name is None:
-      #self.iconBg = None
-      target = None
-    else:
-      for i in icons:
-        if name == i.name:
-	        #self.iconBg = i
-          target = i
-	        break
-      iw = target.bitmap.get_width()
-      ih = target.bitmap.get_height()
-      dx = self.rect[0]
-      dy = self.rect[1]
-      if   (self.layout == LM.FLOATING) : return
-      elif (self.layout == LM.TOPLEFT     ) :
-        self.rect = (                dx,                 dy,            iw + dx,            ih + dy)
-      elif (self.layout == LM.TOPCENTER   ) :
-        self.rect = ((DW - iw) / 2 + dx,                 dy,  (DW + iw)/ 2 + dx,            ih + dy)
-      elif (self.layout == LM.TOPRIGHT    ) :
-        self.rect = (      DW - iw + dx,                 dy,            DW + dx,            ih + dy)
-      elif (self.layout == LM.CENTERLEFT  ) :
-        self.rect = (                dx, (DH - ih) / 2 + dy,            iw + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == LM.CENTER      ) :
-        self.rect = ((DW - iw) / 2 + dx, (DH - ih) / 2 + dy, (DW + iw) / 2 + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == LM.CENTERRIGHT ) :
-        self.rect = (      DW - iw + dx, (DH - ih) / 2 + dy,            DW + dx, (DH + ih) / 2 + dy)
-      elif (self.layout == LM.BOTTOMLEFT  ) :
-        self.rect = (                dx,       DH - ih + dy,            iw + dx,            DH + dy)
-      elif (self.layout == LM.BOTTOMCENTER) :
-        self.rect = ((DW - iw) / 2 + dx,       DH - ih + dy, (DW + iw) / 2 + dx,            DH + dy)
-      elif (self.layout == LM.BOTTOMRIGHT ) :
-        self.rect = (      DW - iw + dx,       DH - ih + dy,            DW + dx,            DH + dy)
-      
+    def setIcon(self, target, name):
+        if     target == 'bg' : target = self.iconBg
+        elif target == 'fg' : target = self.iconFg
+        else                                : return
+        if name is None:
+            #self.iconBg = None
+            target = None
+        else:
+            for i in icons:
+                if name == i.name:
+                    #self.iconBg = i
+                    target = i
+                    break
+            iw = target.bitmap.get_width()
+            ih = target.bitmap.get_height()
+            dx = self.rect[0]
+            dy = self.rect[1]
+            if     (self.layout == LM.FLOATING) : return
+            elif (self.layout == LM.TOPLEFT         ) :
+                self.rect = (                                dx,                                 dy,                        iw + dx,                        ih + dy)
+            elif (self.layout == LM.TOPCENTER     ) :
+                self.rect = ((DW - iw) / 2 + dx,                                 dy,    (DW + iw)/ 2 + dx,                        ih + dy)
+            elif (self.layout == LM.TOPRIGHT        ) :
+                self.rect = (            DW - iw + dx,                                 dy,                        DW + dx,                        ih + dy)
+            elif (self.layout == LM.CENTERLEFT    ) :
+                self.rect = (                                dx, (DH - ih) / 2 + dy,                        iw + dx, (DH + ih) / 2 + dy)
+            elif (self.layout == LM.CENTER            ) :
+                self.rect = ((DW - iw) / 2 + dx, (DH - ih) / 2 + dy, (DW + iw) / 2 + dx, (DH + ih) / 2 + dy)
+            elif (self.layout == LM.CENTERRIGHT ) :
+                self.rect = (            DW - iw + dx, (DH - ih) / 2 + dy,                        DW + dx, (DH + ih) / 2 + dy)
+            elif (self.layout == LM.BOTTOMLEFT    ) :
+                self.rect = (                                dx,             DH - ih + dy,                        iw + dx,                        DH + dy)
+            elif (self.layout == LM.BOTTOMCENTER) :
+                self.rect = ((DW - iw) / 2 + dx,             DH - ih + dy, (DW + iw) / 2 + dx,                        DH + dy)
+            elif (self.layout == LM.BOTTOMRIGHT ) :
+                self.rect = (            DW - iw + dx,             DH - ih + dy,                        DW + dx,                        DH + dy)
+            
 # UI callbacks -------------------------------------------------------------
 # These are defined before globals because they're referenced by items in
 # the global buttons[] list.
 
 def isoCallback(n): # Pass 1 (next ISO) or -1 (prev ISO)
-  global isoMode
-  setIsoMode((isoMode + n) % len(isoData))
+    global isoMode
+    setIsoMode((isoMode + n) % len(isoData))
 
 def awbCallback(n): # Pass 1 (next AWB) or -1 (prev AWB)
-  global awbMode
-  setAwbMode((awbMode + n) % len(awbData))
+    global awbMode
+    setAwbMode((awbMode + n) % len(awbData))
 
 def settingCallback(n): # Pass 1 (next setting) or -1 (prev setting)
-  global screenMode
-  screenMode += n
-  if screenMode <= Mode.VIEWFINDER: screenMode = len(buttons) - 1
-  elif screenMode >= len(buttons): screenMode = Mode.VIEWFINDER + 1
+    global screenMode
+    screenMode += n
+    if screenMode <= Mode.VIEWFINDER: screenMode = len(buttons) - 1
+    elif screenMode >= len(buttons): screenMode = Mode.VIEWFINDER + 1
 
 def fxCallback(n): # Pass 1 (next effect) or -1 (prev effect)
-  global fxMode
-  setFxMode((fxMode + n) % len(fxData))
+    global fxMode
+    setFxMode((fxMode + n) % len(fxData))
 
 def quitCallback(): # Quit confirmation button
-  saveSettings()
-  raise SystemExit
+    saveSettings()
+    raise SystemExit
 
 def viewCallback(n): # Viewfinder buttons
-  global imgNums, loadIdx, imgSurface, screenMode, screenModePrior, settingMode, storeMode
+    global imgNums, loadIdx, imgSurface, screenMode, screenModePrior, settingMode, storeMode
 
-  if n is 0:   # Gear icon (settings)
-    screenMode = settingMode # Switch to last settings mode
-  elif n is 1: # Play icon (image playback)
-    if imgSurface: # Last photo is already memory-resident
-      loadIdx         = len(imgNums)-1
-      screenMode      =  Mode.PLAYBACK
-      screenModePrior =  Mode.UNDEFINED
-    else:      # Load image
-      if len(imgNums):
+    if n is 0:     # Gear icon (settings)
+        screenMode = settingMode # Switch to last settings mode
+    elif n is 1: # Play icon (image playback)
+        if imgSurface: # Last photo is already memory-resident
+            loadIdx                 = len(imgNums)-1
+            screenMode            =    Mode.PLAYBACK
+            screenModePrior =    Mode.UNDEFINED
+        else:            # Load image
+            if len(imgNums):
 	loadIdx = len(imgNums)-1
 	showImage(loadIdx)
-      else: screenMode = Mode.NO_IMAGES
-  else: # Rest of screen = shutter
-    takePicture()
+            else: screenMode = Mode.NO_IMAGES
+    else: # Rest of screen = shutter
+        takePicture()
 
 def doneCallback(): # Exit settings
-  global screenMode, settingMode
-  if screenMode > Mode.VIEWFINDER:
-    settingMode = screenMode
-    saveSettings()
-  screenMode = Mode.VIEWFINDER
+    global screenMode, settingMode
+    if screenMode > Mode.VIEWFINDER:
+        settingMode = screenMode
+        saveSettings()
+    screenMode = Mode.VIEWFINDER
 
 def imageCallback(n): # Pass 1 (next image), -1 (prev image) or 0 (delete)
-  global screenMode
-  if n is 0:
-    screenMode = Mode.DELETE
-  else:
-    showNextImage(n)
+    global screenMode
+    if n is 0:
+        screenMode = Mode.DELETE
+    else:
+        showNextImage(n)
 
 def deleteCallback(n): # Delete confirmation
-  global loadIdx, imgNums, imgSurface, screenMode, storeMode
-  screenMode      = Mode.PLAYBACK
-  screenModePrior = Mode.UNDEFINED
-  if n is True:
-    os.remove(pathData[storeMode] +
-	      '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
-    os.remove(cacheDir + '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
-    del imgNums[loadIdx]
-    if len(imgNums):
-      screen.fill(0)
-      pygame.display.update()
-      showNextImage(-1 if loadIdx==len(imgNums) else 0)
-    else: # Last image deleteted; go to 'no images' mode
-      screenMode = Mode.NO_IMAGES
-      imgSurface = None
-      loadIdx    = -1
+    global loadIdx, imgNums, imgSurface, screenMode, storeMode
+    screenMode            = Mode.PLAYBACK
+    screenModePrior = Mode.UNDEFINED
+    if n is True:
+        os.remove(pathData[storeMode] +
+	            '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
+        os.remove(cacheDir + '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
+        del imgNums[loadIdx]
+        if len(imgNums):
+            screen.fill(0)
+            pygame.display.update()
+            showNextImage(-1 if loadIdx==len(imgNums) else 0)
+        else: # Last image deleteted; go to 'no images' mode
+            screenMode = Mode.NO_IMAGES
+            imgSurface = None
+            loadIdx        = -1
 
 def storeModeCallback(n): # Radio buttons on storage settings screen
-  global pathData, storeMode
-  buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-0')
-  storeMode = n
-  buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-1')
+    global pathData, storeMode
+    buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-0')
+    storeMode = n
+    buttons[Mode.STORAGE][storeMode + 3].setIcon('bg', 'radio3-1')
 
-  #create directory if it does not exist
-  if not os.path.isdir(pathData[storeMode]):
-    try:
-      os.makedirs(pathData[storeMode])
-      # Set new directory ownership to pi user, mode to 755
-      os.chown(pathData[storeMode], uid, gid)
-      os.chmod(pathData[storeMode],
+    #create directory if it does not exist
+    if not os.path.isdir(pathData[storeMode]):
+        try:
+            os.makedirs(pathData[storeMode])
+            # Set new directory ownership to pi user, mode to 755
+            os.chown(pathData[storeMode], uid, gid)
+            os.chmod(pathData[storeMode],
 	stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
 	stat.S_IRGRP | stat.S_IXGRP |
 	stat.S_IROTH | stat.S_IXOTH)
-    except OSError as e:
-      # errno = 2 if can't create folder
-      print errno.errorcode[e.errno]
-      raise SystemExit
+        except OSError as e:
+            # errno = 2 if can't create folder
+            print errno.errorcode[e.errno]
+            raise SystemExit
 
-  # read all existing image numbers
-  readImgNumsList(storeMode)
+    # read all existing image numbers
+    readImgNumsList(storeMode)
 
 def sizeModeCallback(n): # Radio buttons on size settings screen
-  global sizeMode
-  buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-0')
-  sizeMode = n
-  buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-1')
-  camera.resolution = sizeData[sizeMode][1]
+    global sizeMode
+    buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-0')
+    sizeMode = n
+    buttons[Mode.SIZE][sizeMode + 3].setIcon('bg', 'radio3-1')
+    camera.resolution = sizeData[sizeMode][1]
 
 def qualityModeCallback(n): # Radio buttons on quality settings screen
-  global qualityMode
-  buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-0')
-  qualityMode = n
-  buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-1')
+    global qualityMode
+    buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-0')
+    qualityMode = n
+    buttons[Mode.QUALITY][3+qualityMode].setIcon('bg', 'radio3-1')
 
 
 # Global stuff -------------------------------------------------------------
 
-screenMode      =  Mode.VIEWFINDER  # Current screen mode; default = viewfinder
-screenModePrior =  Mode.UNDEFINED   # Prior screen mode (for detecting changes)
-settingMode     =  Mode.QUIT        # Last-used settings mode (default = quit)
-storeMode       =  0                # Storage mode; default = Photos folder
-storeModePrior  = -1                # Prior storage mode (for detecting changes)
-sizeMode        =  0                # Image size; default = Large
-fxMode          =  0                # Image effect; default = Normal
-isoMode         =  0                # ISO setting; default = Auto
-awbMode         =  0                # AWB setting; default = auto
-qualityMode     =  0                # Quality setting: default = jpg
-iconPath        = 'icons'           # Subdir containing UI bitmaps (PNG format)
-loadIdx         = -1                # Image index for loading
-imgSurface      = None              # pygame Surface w/last-loaded image
+screenMode            =    Mode.VIEWFINDER    # Current screen mode; default = viewfinder
+screenModePrior =    Mode.UNDEFINED     # Prior screen mode (for detecting changes)
+settingMode         =    Mode.QUIT                # Last-used settings mode (default = quit)
+storeMode             =    0                                # Storage mode; default = Photos folder
+storeModePrior    = -1                                # Prior storage mode (for detecting changes)
+sizeMode                =    0                                # Image size; default = Large
+fxMode                    =    0                                # Image effect; default = Normal
+isoMode                 =    0                                # ISO setting; default = Auto
+awbMode                 =    0                                # AWB setting; default = auto
+qualityMode         =    0                                # Quality setting: default = jpg
+iconPath                = 'icons'                     # Subdir containing UI bitmaps (PNG format)
+loadIdx                 = -1                                # Image index for loading
+imgSurface            = None                            # pygame Surface w/last-loaded image
 
 # list of existing image numbers. Read by storeModeCallback using
 # readImgNumsList
 imgNums = []
 
 # To use Dropbox uploader, must have previously run the dropbox_uploader.sh
-# script to set up the app key and such.  If this was done as the normal pi
+# script to set up the app key and such.    If this was done as the normal pi
 # user, set upconfig to the .dropbox_uploader config file in that account's
-# home directory.  Alternately, could run the setup script as root and
+# home directory.    Alternately, could run the setup script as root and
 # delete the upconfig line below.
-uploader        = '/home/pi/Dropbox-Uploader/dropbox_uploader.sh'
-upconfig        = '/home/pi/.dropbox_uploader'
+uploader                = '/home/pi/Dropbox-Uploader/dropbox_uploader.sh'
+upconfig                = '/home/pi/.dropbox_uploader'
 
 sizeData = [ # Camera parameters for different size settings
- # Full res      Viewfinder
- [(2592, 1944), (DW, DH)],             # Large
+ # Full res            Viewfinder
+ [(2592, 1944), (DW, DH)],                         # Large
  [(1920, 1080), (DW, int(DH * 0.75))], # Med
- [(1440, 1080), (DW, DH )]]            # Small
+ [(1440, 1080), (DW, DH )]]                        # Small
 
 isoData = [ # Values for ISO settings [ISO value, indicator X position]
- [  0,  27], [100,  64], [200,  97], [320, 137],
+ [    0,    27], [100,    64], [200,    97], [320, 137],
  [400, 164], [500, 197], [640, 244], [800, 297]]
 
 # Setting for auto white balance. A fixed list is used because
 # we have pre-generated icons.
 awbData = [ 'auto', 'off', 'sunlight',
-  'cloudy', 'shade', 'tungsten', 'fluorescent', 'incandescent',
-  'flash', 'horizon' ]
+    'cloudy', 'shade', 'tungsten', 'fluorescent', 'incandescent',
+    'flash', 'horizon' ]
 
 # A fixed list of image effects is used (rather than polling
 # camera.IMAGE_EFFECTS) because the latter contains a few elements
@@ -369,17 +369,17 @@ awbData = [ 'auto', 'off', 'sunlight',
 # camera parameters for which there's no GUI yet) -- e.g. saturation,
 # colorbalance, colorpoint.
 fxData = [
-  'none', 'sketch', 'gpen', 'pastel', 'watercolor', 'oilpaint', 'hatch',
-  'negative', 'colorswap', 'posterise', 'denoise', 'blur', 'film',
-  'washedout', 'emboss', 'cartoon', 'solarize' ]
+    'none', 'sketch', 'gpen', 'pastel', 'watercolor', 'oilpaint', 'hatch',
+    'negative', 'colorswap', 'posterise', 'denoise', 'blur', 'film',
+    'washedout', 'emboss', 'cartoon', 'solarize' ]
 
 # cache directory for thumbnails
 cacheDir = '/home/pi/.cache/picam'
 
 pathData = [
-  '/home/pi/Photos',     # Path for storeMode = 0 (Photos folder)
-  '/boot/DCIM/CANON999', # Path for storeMode = 1 (Boot partition)
-  '/home/pi/Photos']     # Path for storeMode = 2 (Dropbox)
+    '/home/pi/Photos',         # Path for storeMode = 0 (Photos folder)
+    '/boot/DCIM/CANON999', # Path for storeMode = 1 (Boot partition)
+    '/home/pi/Photos']         # Path for storeMode = 2 (Dropbox)
 
 icons = [] # This list gets populated at startup
 
@@ -391,271 +391,271 @@ icons = [] # This list gets populated at startup
 # set); trying to reuse those few elements just made for an ugly
 # tangle of code elsewhere.
 
-buttons = [0] * (Mode.LAST+1)   # create dummy elements for every screen
+buttons = [0] * (Mode.LAST+1)     # create dummy elements for every screen
 
 buttons[Mode.PLAYBACK] = [
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=imageCallback      , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=imageCallback      , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # Spinner (when enabled)
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='trash'   ,                       cb=imageCallback      , value= 0   )]
-                                                                                                            
-buttons[Mode.DELETE] = [                                                                                    
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='delete'                                                             ),
-  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='yn'      , fg='yes'            , cb=deleteCallback     , value=True ),
-  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='yn'      , fg='no'             , cb=deleteCallback     , value=False)]
-                                                                                                            
-buttons[Mode.NO_IMAGES] = [                                                                                 
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER,                                      cb=doneCallback                    ), # Full screen = button
-  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='done'                                                               ), # Fake 'Done' button
-  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='empty'                                                              )] # 'Empty' message
-                                                                                                            
-buttons[Mode.VIEWFINDER] = [                                                                                
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMLEFT  , bg='gear'    ,                       cb=viewCallback       , value=0    ),
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMRIGHT , bg='play'    ,                       cb=viewCallback       , value=1    ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      ,                                      cb=viewCallback       , value=2    ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                ), # 'Working' label (when enabled)
-  Button((  0,  0,  0,  0), layout=LM.CENTER                                                                                )] # Spinner (when enabled)
-                                                                                                            
-buttons[Mode.STORAGE] = [                                                                                   
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback),     
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='store-folder'   , cb=storeModeCallback  , value=0    ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='radio3-0', fg='store-boot'     , cb=storeModeCallback  , value=1    ),
-  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='store-dropbox'  , cb=storeModeCallback  , value=2    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='storage'                                                            )]
-                                                                                                            
-buttons[Mode.SIZE] = [                                                                                      
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='size-l'         , cb=sizeModeCallback   , value=0    ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='radio3-0', fg='size-m'         , cb=sizeModeCallback   , value=1    ),
-  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='size-s'         , cb=sizeModeCallback   , value=2    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='size'                                                               )]
-                                                                                                            
-buttons[Mode.EFFECT] = [                                                                                    
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=fxCallback         , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=fxCallback         , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='fx-none'                                                            ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='fx'                                                                 )]
-                                                                                                            
-buttons[Mode.ISO] = [                                                                                       
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,-10,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=isoCallback        , value=-1   ),
-  Button((-10,-10,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=isoCallback        , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='iso-0'                                                              ),
-  Button((  0,+10,  0,  0), layout=LM.CENTER      , bg='iso-bar'                                                            ),
-  Button((  0,+20,  0,  0), layout=LM.CENTER      , bg='iso-arrow'                                                          ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='iso'                                                                )]
-                                                                                                                         
-buttons[Mode.AWB] = [                                                                                                    
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),                    
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+10,  0,  0,  0), layout=LM.CENTERLEFT  , bg='prev'    ,                       cb=awbCallback        , value=-1   ),
-  Button((-10,  0,  0,  0), layout=LM.CENTERRIGHT , bg='next'    ,                       cb=awbCallback        , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='awb-auto'                                                           ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='awb'                                                                )]
-                                                                                                            
-buttons[Mode.QUALITY] = [                                                                                   
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((+20,  0,  0,  0), layout=LM.CENTERLEFT  , bg='radio3-1', fg='quality-jpg'    , cb=qualityModeCallback, value=0    ),
-  Button((-20,  0,  0,  0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='quality'                                                            )]
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=imageCallback            , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=imageCallback            , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER                                                                                                                                                                ), # 'Working' label (when enabled)
+    Button((    0,    0,    0,    0), layout=LM.CENTER                                                                                                                                                                ), # Spinner (when enabled)
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='trash'     ,                                             cb=imageCallback            , value= 0     )]
+                                                                                                                                                                                                                        
+buttons[Mode.DELETE] = [                                                                                                                                                                        
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='delete'                                                                                                                         ),
+    Button((+20,    0,    0,    0), layout=LM.CENTERLEFT    , bg='yn'            , fg='yes'                        , cb=deleteCallback         , value=True ),
+    Button((-20,    0,    0,    0), layout=LM.CENTERRIGHT , bg='yn'            , fg='no'                         , cb=deleteCallback         , value=False)]
+                                                                                                                                                                                                                        
+buttons[Mode.NO_IMAGES] = [                                                                                                                                                                 
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER,                                                                            cb=doneCallback                                        ), # Full screen = button
+    Button((+20,    0,    0,    0), layout=LM.CENTERLEFT    , bg='done'                                                                                                                             ), # Fake 'Done' button
+    Button((-20,    0,    0,    0), layout=LM.CENTERRIGHT , bg='empty'                                                                                                                            )] # 'Empty' message
+                                                                                                                                                                                                                        
+buttons[Mode.VIEWFINDER] = [                                                                                                                                                                
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMLEFT    , bg='gear'        ,                                             cb=viewCallback             , value=0        ),
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMRIGHT , bg='play'        ,                                             cb=viewCallback             , value=1        ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            ,                                                                            cb=viewCallback             , value=2        ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER                                                                                                                                                                ), # 'Working' label (when enabled)
+    Button((    0,    0,    0,    0), layout=LM.CENTER                                                                                                                                                                )] # Spinner (when enabled)
+                                                                                                                                                                                                                        
+buttons[Mode.STORAGE] = [                                                                                                                                                                     
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback),         
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((+10,    0,    0,    0), layout=LM.CENTERLEFT    , bg='radio3-1', fg='store-folder'     , cb=storeModeCallback    , value=0        ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='radio3-0', fg='store-boot'         , cb=storeModeCallback    , value=1        ),
+    Button((-10,    0,    0,    0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='store-dropbox'    , cb=storeModeCallback    , value=2        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='storage'                                                                                                                        )]
+                                                                                                                                                                                                                        
+buttons[Mode.SIZE] = [                                                                                                                                                                            
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((+10,    0,    0,    0), layout=LM.CENTERLEFT    , bg='radio3-1', fg='size-l'                 , cb=sizeModeCallback     , value=0        ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='radio3-0', fg='size-m'                 , cb=sizeModeCallback     , value=1        ),
+    Button((-10,    0,    0,    0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='size-s'                 , cb=sizeModeCallback     , value=2        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='size'                                                                                                                             )]
+                                                                                                                                                                                                                        
+buttons[Mode.EFFECT] = [                                                                                                                                                                        
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTERLEFT    , bg='prev'        ,                                             cb=fxCallback                 , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTERRIGHT , bg='next'        ,                                             cb=fxCallback                 , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='fx-none'                                                                                                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='fx'                                                                                                                                 )]
+                                                                                                                                                                                                                        
+buttons[Mode.ISO] = [                                                                                                                                                                             
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((+10,-10,    0,    0), layout=LM.CENTERLEFT    , bg='prev'        ,                                             cb=isoCallback                , value=-1     ),
+    Button((-10,-10,    0,    0), layout=LM.CENTERRIGHT , bg='next'        ,                                             cb=isoCallback                , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='iso-0'                                                                                                                            ),
+    Button((    0,+10,    0,    0), layout=LM.CENTER            , bg='iso-bar'                                                                                                                        ),
+    Button((    0,+20,    0,    0), layout=LM.CENTER            , bg='iso-arrow'                                                                                                                    ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='iso'                                                                                                                                )]
+                                                                                                                                                                                                                                                 
+buttons[Mode.AWB] = [                                                                                                                                                                                                        
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),                                        
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((+10,    0,    0,    0), layout=LM.CENTERLEFT    , bg='prev'        ,                                             cb=awbCallback                , value=-1     ),
+    Button((-10,    0,    0,    0), layout=LM.CENTERRIGHT , bg='next'        ,                                             cb=awbCallback                , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='awb-auto'                                                                                                                     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='awb'                                                                                                                                )]
+                                                                                                                                                                                                                        
+buttons[Mode.QUALITY] = [                                                                                                                                                                     
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((+20,    0,    0,    0), layout=LM.CENTERLEFT    , bg='radio3-1', fg='quality-jpg'        , cb=qualityModeCallback, value=0        ),
+    Button((-20,    0,    0,    0), layout=LM.CENTERRIGHT , bg='radio3-0', fg='quality-jpg+raw', cb=qualityModeCallback, value=1        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='quality'                                                                                                                        )]
 
 buttons[Mode.QUIT] = [
-  Button((  0,  0,  0,  0), layout=LM.BOTTOMCENTER, bg='done'    ,                       cb=doneCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPLEFT     , bg='prev'    ,                       cb=settingCallback    , value=-1   ),
-  Button((  0,  0,  0,  0), layout=LM.TOPRIGHT    , bg='next'    ,                       cb=settingCallback    , value= 1   ),
-  Button((  0,  0,  0,  0), layout=LM.CENTER      , bg='quit-ok' ,                       cb=quitCallback                    ),
-  Button((  0,  0,  0,  0), layout=LM.TOPCENTER   , bg='quit'                                                               )]
+    Button((    0,    0,    0,    0), layout=LM.BOTTOMCENTER, bg='done'        ,                                             cb=doneCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPLEFT         , bg='prev'        ,                                             cb=settingCallback        , value=-1     ),
+    Button((    0,    0,    0,    0), layout=LM.TOPRIGHT        , bg='next'        ,                                             cb=settingCallback        , value= 1     ),
+    Button((    0,    0,    0,    0), layout=LM.CENTER            , bg='quit-ok' ,                                             cb=quitCallback                                        ),
+    Button((    0,    0,    0,    0), layout=LM.TOPCENTER     , bg='quit'                                                                                                                             )]
 
 # Assorted utility functions -----------------------------------------------
 
 def setFxMode(n):
-  global fxMode
-  fxMode = n
-  camera.image_effect = fxData[fxMode]
-  buttons[Mode.EFFECT][5].setIcon('bg', 'fx-' + fxData[fxMode])
+    global fxMode
+    fxMode = n
+    camera.image_effect = fxData[fxMode]
+    buttons[Mode.EFFECT][5].setIcon('bg', 'fx-' + fxData[fxMode])
 
 def setIsoMode(n):
-  global isoMode
-  isoMode    = n
-  camera.ISO = isoData[isoMode][0]
-  buttons[Mode.ISO][5].setIcon('bg', 'iso-' + str(isoData[isoMode][0]))
-  buttons[Mode.ISO][7].rect = ((isoData[isoMode][1] - 10,) +
-    buttons[Mode.ISO][7].rect[1:])
+    global isoMode
+    isoMode        = n
+    camera.ISO = isoData[isoMode][0]
+    buttons[Mode.ISO][5].setIcon('bg', 'iso-' + str(isoData[isoMode][0]))
+    buttons[Mode.ISO][7].rect = ((isoData[isoMode][1] - 10,) +
+        buttons[Mode.ISO][7].rect[1:])
 
 def setAwbMode(n):
-  global awbMode
-  awbMode = n
-  buttons[Mode.AWB][5].setIcon('bg', 'awb-' + awbData[awbMode])
-  camera.awb_mode = awbData[awbMode]
-  if awbData[awbMode] == 'off':
-    camera.awb_gains = (1.0,1.0)    # needed because of ignorant engineers
-  # record white-balance in exif. Too bad exif-tags only allow auto/manual.
-  if awbData[awbMode] == 'auto':
-    camera.exif_tags['EXIF.WhiteBalance'] = '0'
-  else:
-    camera.exif_tags['EXIF.WhiteBalance'] = '1'
+    global awbMode
+    awbMode = n
+    buttons[Mode.AWB][5].setIcon('bg', 'awb-' + awbData[awbMode])
+    camera.awb_mode = awbData[awbMode]
+    if awbData[awbMode] == 'off':
+        camera.awb_gains = (1.0,1.0)        # needed because of ignorant engineers
+    # record white-balance in exif. Too bad exif-tags only allow auto/manual.
+    if awbData[awbMode] == 'auto':
+        camera.exif_tags['EXIF.WhiteBalance'] = '0'
+    else:
+        camera.exif_tags['EXIF.WhiteBalance'] = '1'
 
 def saveSettings():
-  try:
-    outfile = open(os.path.expanduser('~')+'/cam.pkl', 'wb')
-    # Use a dictionary (rather than pickling 'raw' values) so
-    # the number & order of things can change without breaking.
-    d = { 'fx'      : fxMode,
-	  'iso'     : isoMode,
-	  'awb'     : awbMode,
-	  'quality' : qualityMode,
-	  'size'    : sizeMode,
-	  'store'   : storeMode }
-    pickle.dump(d, outfile)
-    outfile.close()
-  except:
-    pass
+    try:
+        outfile = open(os.path.expanduser('~')+'/cam.pkl', 'wb')
+        # Use a dictionary (rather than pickling 'raw' values) so
+        # the number & order of things can change without breaking.
+        d = { 'fx'            : fxMode,
+	    'iso'         : isoMode,
+	    'awb'         : awbMode,
+	    'quality' : qualityMode,
+	    'size'        : sizeMode,
+	    'store'     : storeMode }
+        pickle.dump(d, outfile)
+        outfile.close()
+    except:
+        pass
 
 def loadSettings():
-  try:
-    infile = open(os.path.expanduser('~')+'/cam.pkl', 'rb')
-    d      = pickle.load(infile)
-    infile.close()
-    if 'fx'      in d: setFxMode(   d['fx'])
-    if 'iso'     in d: setIsoMode(  d['iso'])
-    if 'awb'     in d: setAwbMode(  d['awb'])
-    if 'quality' in d: qualityModeCallback(d['quality'])
-    if 'size'    in d: sizeModeCallback( d['size'])
-    if 'store'   in d: storeModeCallback(d['store'])
-  except:
-    storeModeCallback(storeMode)
+    try:
+        infile = open(os.path.expanduser('~')+'/cam.pkl', 'rb')
+        d            = pickle.load(infile)
+        infile.close()
+        if 'fx'            in d: setFxMode(     d['fx'])
+        if 'iso'         in d: setIsoMode(    d['iso'])
+        if 'awb'         in d: setAwbMode(    d['awb'])
+        if 'quality' in d: qualityModeCallback(d['quality'])
+        if 'size'        in d: sizeModeCallback( d['size'])
+        if 'store'     in d: storeModeCallback(d['store'])
+    except:
+        storeModeCallback(storeMode)
 
 # Read existing numbers into imgNums. Triggerd by a change of
 # storeMode.
 def readImgNumsList(n):
-  global pathData, imgNums
-  imgNums = []
-  for file in os.listdir(pathData[n]):
-    if fnmatch.fnmatch(file,'rpi_[0-9][0-9][0-9][0-9].jpg'):
-      imgNums.append(int(file[4:8]))
-  imgNums.sort()
+    global pathData, imgNums
+    imgNums = []
+    for file in os.listdir(pathData[n]):
+        if fnmatch.fnmatch(file,'rpi_[0-9][0-9][0-9][0-9].jpg'):
+            imgNums.append(int(file[4:8]))
+    imgNums.sort()
 
-# Busy indicator.  To use, run in separate thread, set global 'busy'
+# Busy indicator.    To use, run in separate thread, set global 'busy'
 # to False when done.
 def spinner():
-  global busy, screenMode, screenModePrior
+    global busy, screenMode, screenModePrior
 
-  buttons[screenMode][3].setIcon('bg', 'working')
-  buttons[screenMode][3].draw(screen)
-  pygame.display.update()
-
-  busy = True
-  n    = 0
-  while busy is True:
-    buttons[screenMode][4].setIcon('bg', 'work-' + str(n))
-    buttons[screenMode][4].draw(screen)
+    buttons[screenMode][3].setIcon('bg', 'working')
+    buttons[screenMode][3].draw(screen)
     pygame.display.update()
-    n = (n + 1) % 5
-    time.sleep(0.15)
 
-  buttons[screenMode][3].setIcon('bg', None)
-  buttons[screenMode][4].setIcon('bg', None)
-  screenModePrior = Mode.UNDEFINED # Force refresh
+    busy = True
+    n        = 0
+    while busy is True:
+        buttons[screenMode][4].setIcon('bg', 'work-' + str(n))
+        buttons[screenMode][4].draw(screen)
+        pygame.display.update()
+        n = (n + 1) % 5
+        time.sleep(0.15)
 
-def saveThumbnail(fname,tname):      # fname: filename with extension
-  metadata = pyexiv2.ImageMetadata(fname)
-  metadata.read()
-  thumb = metadata.exif_thumbnail
-  thumb.write_to_file(tname)   # tname: thumbname without extension
-  os.chown(tname+".jpg", uid, gid)
-  os.chmod(tname+".jpg",
-      stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+    buttons[screenMode][3].setIcon('bg', None)
+    buttons[screenMode][4].setIcon('bg', None)
+    screenModePrior = Mode.UNDEFINED # Force refresh
+
+def saveThumbnail(fname,tname):            # fname: filename with extension
+    metadata = pyexiv2.ImageMetadata(fname)
+    metadata.read()
+    thumb = metadata.exif_thumbnail
+    thumb.write_to_file(tname)     # tname: thumbname without extension
+    os.chown(tname+".jpg", uid, gid)
+    os.chmod(tname+".jpg",
+            stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
 def takePicture():
-  global busy, gid, loadIdx, imgSurface, sizeMode, storeMode, storeModePrior, uid, cacheDir, imgNums
+    global busy, gid, loadIdx, imgSurface, sizeMode, storeMode, storeModePrior, uid, cacheDir, imgNums
 
-  saveNum = imgNums[-1] + 1 % 10000 if len(imgNums) else 0
-  filename = pathData[storeMode] + '/rpi_' + '%04d' % saveNum + '.jpg'
-  cachename = cacheDir+'/rpi_' + '%04d' % saveNum
+    saveNum = imgNums[-1] + 1 % 10000 if len(imgNums) else 0
+    filename = pathData[storeMode] + '/rpi_' + '%04d' % saveNum + '.jpg'
+    cachename = cacheDir+'/rpi_' + '%04d' % saveNum
 
-  t = threading.Thread(target=spinner)
-  t.start()
+    t = threading.Thread(target=spinner)
+    t.start()
 
-  imgSurface = None
-  camera.resolution = sizeData[sizeMode][0]
-  try:
-    camera.capture(filename, use_video_port=False, format='jpeg',
-      thumbnail=(DW, DH, 60),bayer=qualityMode==1)
-    imgNums.append(saveNum)
-    # Set image file ownership to pi user, mode to 644
-    os.chown(filename, uid, gid)
-    os.chmod(filename,
-      stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-    saveThumbnail(filename,cachename)
-    imgSurface  = pygame.image.load(cachename+'.jpg')
-    if storeMode == 2: # Dropbox
-      if upconfig:
+    imgSurface = None
+    camera.resolution = sizeData[sizeMode][0]
+    try:
+        camera.capture(filename, use_video_port=False, format='jpeg',
+            thumbnail=(DW, DH, 60),bayer=qualityMode==1)
+        imgNums.append(saveNum)
+        # Set image file ownership to pi user, mode to 644
+        os.chown(filename, uid, gid)
+        os.chmod(filename,
+            stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+        saveThumbnail(filename,cachename)
+        imgSurface    = pygame.image.load(cachename+'.jpg')
+        if storeMode == 2: # Dropbox
+            if upconfig:
 	cmd = uploader + ' -f ' + upconfig + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
-      else:
+            else:
 	cmd = uploader + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
-      call ([cmd], shell=True)
+            call ([cmd], shell=True)
 
-  finally:
-    # Add error handling/indicator (disk full, etc.)
-    camera.resolution = sizeData[sizeMode][1]
+    finally:
+        # Add error handling/indicator (disk full, etc.)
+        camera.resolution = sizeData[sizeMode][1]
 
-  busy = False
-  t.join()
+    busy = False
+    t.join()
 
-  if imgSurface:
-    if imgSurface.get_height() < DH: # Letterbox
-      screen.fill(0)
-    screen.blit(imgSurface,
-      ((DW - imgSurface.get_width() ) / 2,
-       (DH - imgSurface.get_height()) / 2))
-    pygame.display.update()
-    time.sleep(2.5)
-    loadIdx = len(imgNums)-1
+    if imgSurface:
+        if imgSurface.get_height() < DH: # Letterbox
+            screen.fill(0)
+        screen.blit(imgSurface,
+            ((DW - imgSurface.get_width() ) / 2,
+             (DH - imgSurface.get_height()) / 2))
+        pygame.display.update()
+        time.sleep(2.5)
+        loadIdx = len(imgNums)-1
 
 def showNextImage(direction):
-  global busy, loadIdx, imgNums
+    global busy, loadIdx, imgNums
 
-  loadIdx += direction
-  if loadIdx == len(imgNums):  # past end of list, continue at beginning
-    loadIdx = 0
-  elif loadIdx == -1:       # before start of list, continue with end of list
-    loadIdx = len(imgNums)-1
-  showImage(loadIdx)
+    loadIdx += direction
+    if loadIdx == len(imgNums):    # past end of list, continue at beginning
+        loadIdx = 0
+    elif loadIdx == -1:             # before start of list, continue with end of list
+        loadIdx = len(imgNums)-1
+    showImage(loadIdx)
 
 def showImage(n):
-  global busy, imgNums, imgSurface, screenMode, screenModePrior, storeMode, pathData
+    global busy, imgNums, imgSurface, screenMode, screenModePrior, storeMode, pathData
 
-  t = threading.Thread(target=spinner)
-  t.start()
+    t = threading.Thread(target=spinner)
+    t.start()
 
-  cachefile = cacheDir + '/rpi_' + '%04d' % imgNums[n] + '.jpg'
+    cachefile = cacheDir + '/rpi_' + '%04d' % imgNums[n] + '.jpg'
 
-  # if cachefile does not exist, recreate it
-  if not os.path.exists(cachefile):
-    filename = pathData[storeMode] + '/rpi_' + '%04d' % imgNums[n] + '.jpg'
-    saveThumbnail(filename,cacheDir + '/rpi_' + '%04d' % imgNums[n])
+    # if cachefile does not exist, recreate it
+    if not os.path.exists(cachefile):
+        filename = pathData[storeMode] + '/rpi_' + '%04d' % imgNums[n] + '.jpg'
+        saveThumbnail(filename,cacheDir + '/rpi_' + '%04d' % imgNums[n])
 
-  imgSurface   = pygame.image.load(cachefile)
+    imgSurface     = pygame.image.load(cachefile)
 
-  busy = False
-  t.join()
+    busy = False
+    t.join()
 
-  screenMode      = Mode.PLAYBACK
-  screenModePrior = Mode.UNDEFINED # Force screen refresh
+    screenMode            = Mode.PLAYBACK
+    screenModePrior = Mode.UNDEFINED # Force screen refresh
 
 
 # Initialization -----------------------------------------------------------
@@ -663,13 +663,13 @@ def showImage(n):
 # fix iconPath: it's relative to the executable
 thisDir,thisFile = os.path.split(sys.argv[0])
 if len(thisDir) > 0 :
-  iconPath = thisDir + os.path.sep + iconPath
+    iconPath = thisDir + os.path.sep + iconPath
 
 # Init framebuffer/touchscreen environment variables
 os.putenv('SDL_VIDEODRIVER', 'fbcon')
-os.putenv('SDL_FBDEV'      , '/dev/fb1')
-os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
-os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+os.putenv('SDL_FBDEV'            , '/dev/fb1')
+os.putenv('SDL_MOUSEDRV'     , 'TSLIB')
+os.putenv('SDL_MOUSEDEV'     , '/dev/input/touchscreen')
 
 # running as root from /etc/rc.local and not under sudo control, so
 # query ids directly
@@ -685,44 +685,44 @@ pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 
 # Init camera and set up default values
-camera            = picamera.PiCamera()
+camera                        = picamera.PiCamera()
 atexit.register(camera.close)
 camera.resolution = sizeData[sizeMode][1]
 
 # Load all icons at startup.
 for file in os.listdir(iconPath):
-  if fnmatch.fnmatch(file, '*.png'):
-    icons.append(Icon(file.split('.')[0]))
+    if fnmatch.fnmatch(file, '*.png'):
+        icons.append(Icon(file.split('.')[0]))
 
 # Assign Icons to Buttons, now that they're loaded
-for s in buttons:        # For each screenful of buttons...
-  for b in s:            #  For each button on screen...
-    b.setIcon('bg', b.bg)
-    b.bg = None
-    b.setIcon('fg', b.fg)
-    b.fg = None
-#    for i in icons:      #   For each icon...
-#      if b.bg == i.name: #    Compare names; match?
-#        b.iconBg = i     #     Assign Icon to Button
-#        b.bg     = None  #     Name no longer used; allow garbage collection
-#      if b.fg == i.name:
-#        b.iconFg = i
-#        b.fg     = None
+for s in buttons:                # For each screenful of buttons...
+    for b in s:                        #    For each button on screen...
+        b.setIcon('bg', b.bg)
+        b.bg = None
+        b.setIcon('fg', b.fg)
+        b.fg = None
+#        for i in icons:            #     For each icon...
+#            if b.bg == i.name: #        Compare names; match?
+#                b.iconBg = i         #         Assign Icon to Button
+#                b.bg         = None    #         Name no longer used; allow garbage collection
+#            if b.fg == i.name:
+#                b.iconFg = i
+#                b.fg         = None
 
 # one-time initialization of cache-directory
 if not os.path.isdir(cacheDir):
-  try:
-    os.makedirs(cacheDir)
-    # Set new directory ownership to pi user, mode to 755
-    os.chown(cacheDir, uid, gid)
-    os.chmod(cacheDir,
-      stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
-      stat.S_IRGRP | stat.S_IXGRP |
-      stat.S_IROTH | stat.S_IXOTH)
-  except OSError as e:
-    # errno = 2 if can't create folder
-    print errno.errorcode[e.errno]
-    raise SystemExit
+    try:
+        os.makedirs(cacheDir)
+        # Set new directory ownership to pi user, mode to 755
+        os.chown(cacheDir, uid, gid)
+        os.chmod(cacheDir,
+            stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
+            stat.S_IRGRP | stat.S_IXGRP |
+            stat.S_IROTH | stat.S_IXOTH)
+    except OSError as e:
+        # errno = 2 if can't create folder
+        print errno.errorcode[e.errno]
+        raise SystemExit
 
 loadSettings() # Must come last; fiddles with Button/Icon states
 
@@ -730,46 +730,44 @@ loadSettings() # Must come last; fiddles with Button/Icon states
 pygame.mouse.set_visible(True)
 while(True):
 
-  # Process touchscreen input
-  while True:
-    for event in pygame.event.get():
-      if(event.type is MOUSEBUTTONDOWN):
-        pos = pygame.mouse.get_pos()
-        for b in buttons[screenMode]:
-          if b.selected(pos): break
-    # If in viewfinder or settings modes, stop processing touchscreen
-    # and refresh the display to show the live preview.  In other modes
-    # (image playback, etc.), stop and refresh the screen only when
-    # screenMode changes.
-    if screenMode >= Mode.VIEWFINDER or screenMode != screenModePrior: break
+    # Process touchscreen input
+    while True:
+        for event in pygame.event.get():
+            if(event.type is MOUSEBUTTONDOWN):
+                pos = pygame.mouse.get_pos()
+                for b in buttons[screenMode]:
+                    if b.selected(pos): break
+        # If in viewfinder or settings modes, stop processing touchscreen
+        # and refresh the display to show the live preview.    In other modes
+        # (image playback, etc.), stop and refresh the screen only when
+        # screenMode changes.
+        if screenMode >= Mode.VIEWFINDER or screenMode != screenModePrior: break
 
-  # Refresh display
-  if screenMode >= Mode.VIEWFINDER: # Viewfinder or settings modes
-    stream = io.BytesIO() # Capture into in-memory stream
-    camera.capture(stream, resize=sizeData[sizeMode][1],
-		   use_video_port=True, format='rgb')
-    stream.seek(0)
-    stream.readinto(rgb)
-    stream.close()
-    img = pygame.image.frombuffer(rgb[0:
-      (sizeData[sizeMode][1][0] * sizeData[sizeMode][1][1] * 3)],
-      sizeData[sizeMode][1], 'RGB')
-  elif screenMode in [Mode.PLAYBACK, Mode.DELETE]:
-    img = imgSurface   # Show last-loaded image
-  else:                # 'No Photos' mode
-    img = None         # You get nothing, good day sir
+    # Refresh display
+    if screenMode >= Mode.VIEWFINDER: # Viewfinder or settings modes
+        stream = io.BytesIO() # Capture into in-memory stream
+        camera.capture(stream, resize=sizeData[sizeMode][1],
+		     use_video_port=True, format='rgb')
+        stream.seek(0)
+        stream.readinto(rgb)
+        stream.close()
+        img = pygame.image.frombuffer(rgb[0:
+            (sizeData[sizeMode][1][0] * sizeData[sizeMode][1][1] * 3)],
+            sizeData[sizeMode][1], 'RGB')
+    elif screenMode in [Mode.PLAYBACK, Mode.DELETE]:
+        img = imgSurface     # Show last-loaded image
+    else:                                # 'No Photos' mode
+        img = None                 # You get nothing, good day sir
 
-  if img is None or img.get_height() < DH: # Letterbox, clear background
-    screen.fill(0)
-  if img:
-    screen.blit(img,
-      (DW - img.get_width() ) / 2,
-      (DH - img.get_height()) / 2)
+    if img is None or img.get_height() < DH: # Letterbox, clear background
+        screen.fill(0)
+    if img:
+        screen.blit(img, ((DW - img.get_width()) / 2, (DH - img.get_height()) / 2))
 
-  # Overlay buttons on display and update
-  for i,b in enumerate(buttons[screenMode]):
-    b.draw(screen)
-  pygame.display.update()
+    # Overlay buttons on display and update
+    for i,b in enumerate(buttons[screenMode]):
+        b.draw(screen)
+    pygame.display.update()
 
-  screenModePrior = screenMode
-  
+    screenModePrior = screenMode
+    
